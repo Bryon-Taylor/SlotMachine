@@ -22,9 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
@@ -102,9 +100,22 @@ public class SlotMachine extends Application {
 								 cashOutBtn,
 								 spinBtn;
 
+	private Pane firstReel,
+							 secondReel,
+							 thirdReel,
+						   firstAnimation,
+							 secondAnimation,
+							 thirdAnimation;
+
 	private Image imgStardust;
 	private ImageView stardustImgView;
-	private HBox hBoxTop;
+	private HBox hBoxTop,
+							 hBoxBottom,
+							 adjustBetBox,
+			    		 playOrQuitBox,
+	leftTest, rightTest; // todo
+
+	private GridPane gridPane, gridPaneTop;
 
 	// find user directory to create path for files
 	private String absolutePath = System.getProperty("user.dir");
@@ -116,125 +127,27 @@ public class SlotMachine extends Application {
 		initFieldDescriptions();
 		initButtons();
 		initButtonListeners();
+		initGameLayout();
 
-		// initializes reels to all triple 7's image TODO: add method
-		Pane firstReel = reel1.getDisplayReel();
-		Pane secondReel = reel2.getDisplayReel();
-		Pane thirdReel = reel3.getDisplayReel();
-
-		// 3 panes get animation of spinning reels // TODO: add method
-		Pane firstAnimation = reel1.createAnimatedPane();
-		Pane secondAnimation = reel2.createAnimatedPane();
-		Pane thirdAnimation = reel3.createAnimatedPane();
-
-		/******* bottomButtons *********/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		// create HBox's and add elements
-		HBox hBoxBottom = new HBox();
-		int hBoxInsetTop = (int) Math.round(40 * SCALAR),
-			hBoxInsetRight = (int) Math.round(16 * SCALAR),
-			hBoxInsetBottom = (int) Math.round(500 * SCALAR),
-			hBoxInsetLeft = (int) Math.round(230 * SCALAR),
-			hBoxInsetTop2 = (int) Math.round(50 * SCALAR),
-			hBoxInsetRight2 = (int) Math.round(20 * SCALAR),
-			hBoxInsetLeft2 = (int) Math.round(20 * SCALAR);
-
-		hBoxTop.setAlignment(Pos.CENTER);
-		hBoxTop.setPadding(new Insets(hBoxInsetTop, hBoxInsetRight,
-									  hBoxInsetBottom, hBoxInsetLeft));
-		hBoxBottom.setPadding(new Insets(hBoxInsetTop2, hBoxInsetRight2,
-										 0, hBoxInsetLeft2));
-		hBoxBottom.setAlignment(Pos.BASELINE_CENTER);
-		hBoxBottom.getChildren().add(spinBtn);
-
-		int hBoxSpacing = (int) Math.round(85 * SCALAR); // todo: magic numbers, this line never used
-		/***FOR ORIGINAL SIZE SPACING USING "hBoxSpacing" as argument instead of 10***/
-		HBox playOrQuitBox = new HBox(10); // todo change var name
-		playOrQuitBox.setPadding(new Insets(hBoxInsetLeft2, 0, 0, 0));
-		playOrQuitBox.setAlignment(Pos.CENTER);
-		playOrQuitBox.getChildren().add(addCashBtn);
-		playOrQuitBox.getChildren().add(cashOutBtn);
-
-		/***FOR ORIGINAL SIZE SPACING USING "hBoxSpacing" as argument instead of 10***/
-		HBox adjustBetBox = new HBox(10); // todo
-		adjustBetBox.setPadding(new Insets(hBoxInsetLeft2, 0, 0, 0));
-		adjustBetBox.setAlignment(Pos.CENTER);
-		adjustBetBox.getChildren().add(addBetBtn);
-		adjustBetBox.getChildren().add(minusBetBtn);
-
-		// column and row numbers for gridpane todo: private vars
-		int col0 = 0,
-			col1 = 1,
-			col2 = 2;
-
-		int row1 = 1,
-			row3 = 3, // todo: row2?
-			row4 = 4,
-			row5 = 5;
-
-		// add arranges all UI components in a grid
-		int verticalGap = (int) Math.round(15 * SCALAR); // todo: magic num
-		int horizontalGap = (int) Math.round(25 * SCALAR);
-		GridPane gridPane = new GridPane();
-		gridPane.setHgap(horizontalGap);
-		gridPane.setVgap(verticalGap);
-
-		gridPane.add(adjustBetBox, col0, row5);
-		gridPane.add(playOrQuitBox, col2, row5);
-
-		gridPane.add(firstReel, col0, row1);
-		gridPane.add(secondReel, col1, row1);
-		gridPane.add(thirdReel, col2, row1);
-
-		gridPane.add(creditsText, col0, row4);
-		gridPane.add(betText, col1, row4);
-		gridPane.add(paidText, col2, row4);
-
-		gridPane.add(creditsField, col0, row3);
-		gridPane.add(betField, col1, row3);
-		gridPane.add(paidField, col2, row3);
-
-		int gPanePadTop = (int) Math.round(350 * SCALAR); // todo: magic numbers
-		int gPanePadRight = (int) Math.round(75 * SCALAR);
-		int gPanePadBottom = (int) Math.round(50 * SCALAR);
-		int gPanePadLeft = (int) Math.round(75 * SCALAR);
-		gridPane.add(hBoxBottom, col1, row5);
-		gridPane.setPadding(new Insets(gPanePadTop, gPanePadRight,
-							gPanePadBottom , gPanePadLeft));
-		GridPane.setHalignment(creditsText, HPos.CENTER);
-		GridPane.setHalignment(betText, HPos.CENTER);
-		GridPane.setHalignment(paidText, HPos.CENTER);
-		GridPane.setHalignment(spinBtn, HPos.CENTER);
 
 		// add components to stage
-		Group root = new Group();
+		GridPane root = new GridPane();
+		//root.setAlignment(Pos.CENTER);
+		root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
 
-		root.getChildren().add(gridPane);
 		root.getChildren().add(hBoxTop);
+		root.getChildren().add(gridPane);
+
+
+		//root.getChildren().add(hBoxTop);
+
 
 
 
 		int width = (int) Math.round(WINDOW_WIDTH * SCALAR);
 		int height = (int) Math.round(WINDOW_HEIGHT * SCALAR);
 
-		Scene scene = new Scene(root, width, height, Color.BLACK);
+		Scene scene = new Scene(root, width, height, Color.BLACK);  // todo: change black
 		mainStage.setScene(scene);
 
 		mainStage.setTitle("Stardust - Lucky Sevens");
@@ -464,14 +377,7 @@ public class SlotMachine extends Application {
 	}
 
 	private void initTopImage() {
-		// stores animated banner at top in HBox
-		imgStardust = new Image("file:" + absolutePath + "/src/StardustLarger.gif");
-		stardustImgView = new ImageView(imgStardust);
-		stardustImgView.setFitWidth(650 * SCALAR); // todo
-		stardustImgView.setFitHeight(309 * SCALAR);
 
-		hBoxTop = new HBox();
-		hBoxTop.getChildren().add(stardustImgView);
 	}
 	// dollar amounts that appear in the "add money" dialog prompt
 	private void initTextFields() {
@@ -611,6 +517,123 @@ public class SlotMachine extends Application {
 			cashOutAlert.showAndWait();
 			creditsField.setText("0");
 		});
+	}
+
+	private void initGameLayout() {
+		int hBoxInsetTop = (int) Math.round(40 * SCALAR),
+				hBoxInsetRight = (int) Math.round(16 * SCALAR),
+				hBoxInsetBottom = (int) Math.round(500 * SCALAR), // todo can be 0
+				hBoxInsetLeft = (int) Math.round(230 * SCALAR),
+				hBoxInsetTop2 = (int) Math.round(50 * SCALAR),
+				hBoxInsetRight2 = (int) Math.round(20 * SCALAR),
+				hBoxInsetLeft2 = (int) Math.round(20 * SCALAR);
+
+		// initialize top image and style
+		imgStardust = new Image("file:" + absolutePath + "/src/StardustLarger.gif");
+		stardustImgView = new ImageView(imgStardust);
+		stardustImgView.setFitWidth(650 * SCALAR); // todo
+		stardustImgView.setFitHeight(309 * SCALAR);
+
+		// create a new horizontal box to contain top image
+		hBoxTop = new HBox();
+
+		hBoxTop.setAlignment(Pos.TOP_CENTER);
+		//hBoxTop.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+		hBoxTop.setPadding(new Insets(hBoxInsetTop, 0, 0, 0));
+		hBoxTop.getChildren().add(stardustImgView);
+		//hBoxTop.setMinWidth(WINDOW_WIDTH);
+
+		gridPaneTop = new GridPane();
+
+		gridPaneTop.setGridLinesVisible(false);
+
+
+		gridPaneTop.add(hBoxTop, 0, 0);
+
+
+		//GridPane.setHalignment(hBoxTop, HPos.CENTER);
+
+		// initializes reels to all triple 7's image TODO: add method
+		firstReel = reel1.getDisplayReel();
+		secondReel = reel2.getDisplayReel();
+		thirdReel = reel3.getDisplayReel();
+
+		// 3 panes get animation of spinning reels // TODO: add method
+		firstAnimation = reel1.createAnimatedPane();
+		secondAnimation = reel2.createAnimatedPane();
+		thirdAnimation = reel3.createAnimatedPane();
+
+		// create a new horizontal box for the "spin" button
+		hBoxBottom = new HBox();
+//		hBoxBottom.setPadding(new Insets(hBoxInsetTop2, 0, // changed the left and right padding to 0, no diff?
+//				0, 0));
+		hBoxBottom.setAlignment(Pos.BOTTOM_CENTER);
+		hBoxBottom.setPadding((new Insets(40, 0, 0, 0)));
+		hBoxBottom.getChildren().add(spinBtn);
+
+		// create new horizontal box to contain "add bet" and "minus bet" buttons
+		adjustBetBox = new HBox(10); // todo
+		adjustBetBox.setPadding(new Insets(hBoxInsetLeft2, 0, 0, 0));
+		adjustBetBox.setAlignment(Pos.CENTER);
+		adjustBetBox.getChildren().add(addBetBtn);
+		adjustBetBox.getChildren().add(minusBetBtn);
+
+		// create new horizontal box to contain "add cash" and "cash out" buttons
+		playOrQuitBox = new HBox(10); // todo change var name
+		playOrQuitBox.setPadding(new Insets(hBoxInsetLeft2, 0, 0, 0));
+		playOrQuitBox.setAlignment(Pos.CENTER);
+		playOrQuitBox.getChildren().add(addCashBtn);
+		playOrQuitBox.getChildren().add(cashOutBtn);
+
+
+
+		// column and row numbers for gridpane todo: private vars
+		int col0 = 0,
+				col1 = 1,
+				col2 = 2;
+
+		int row1 = 1, // todo start at 0?
+				row3 = 3, // todo: row2?
+				row4 = 4,
+				row5 = 5;
+
+		// add arranges all UI components in a grid
+		int verticalGap = (int) Math.round(15 * SCALAR); // todo: magic num
+		int horizontalGap = (int) Math.round(25 * SCALAR);
+		gridPane = new GridPane();
+
+		// set spacing gaps between elements
+		gridPane.setHgap(horizontalGap);
+		gridPane.setVgap(verticalGap);
+		gridPane.setGridLinesVisible(false); // todo: disable
+		//gridPane.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
+
+		gridPane.add(adjustBetBox, col0, row5);
+		gridPane.add(playOrQuitBox, col2, row5);
+
+		gridPane.add(firstReel, col0, row1);
+		gridPane.add(secondReel, col1, row1);
+		gridPane.add(thirdReel, col2, row1);
+
+		gridPane.add(creditsText, col0, row4);
+		gridPane.add(betText, col1, row4);
+		gridPane.add(paidText, col2, row4);
+
+		gridPane.add(creditsField, col0, row3);
+		gridPane.add(betField, col1, row3);
+		gridPane.add(paidField, col2, row3);
+
+		int gPanePadTop = (int) Math.round(350 * SCALAR); // todo: magic numbers
+		int gPanePadRight = (int) Math.round(75 * SCALAR);
+		int gPanePadBottom = (int) Math.round(50 * SCALAR);
+		int gPanePadLeft = (int) Math.round(75 * SCALAR);
+		gridPane.add(hBoxBottom, col1, row5);
+		gridPane.setPadding(new Insets(gPanePadTop, gPanePadRight,
+				gPanePadBottom , gPanePadLeft));
+		GridPane.setHalignment(creditsText, HPos.CENTER);
+		GridPane.setHalignment(betText, HPos.CENTER);
+		GridPane.setHalignment(paidText, HPos.CENTER);
+		//GridPane.setHalignment(spinBtn, HPos.CENTER);
 	}
 	
 	/** to launch application */
