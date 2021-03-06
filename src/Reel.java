@@ -22,6 +22,7 @@ public class Reel {
 	
 	// scales sizes
 	double scalar = .7;
+
 	// pane to store image
 	Pane reelPane;
 	
@@ -33,28 +34,28 @@ public class Reel {
 	
 	// Strings point to path of images todo: private static final
 	String reelAnimation = "/src/reelAnimation.gif"; // TODO: is this used?
-	String singleBar = "/src/singleBar.png";
-	String doubleBar = "/src/doubleBar.png";
-	String tripleBar = "/src/tripleBar2.png";
-	String single7 = "/src/single7.png";
-	String double7s = "/src/double7s.png";
-	String triple7s = "/src/triple7s.png";
-	String cherries = "/src/cherries.png";
-	String trip7sWinner = "/src/3x7sWinner.png";
+	String singleBar = "/src/images/singleBar.png";
+	String doubleBar = "/src/images/doubleBar.png";
+	String tripleBar = "/src/images/tripleBar2.png";
+	String single7 = "/src/images/single7.png";
+	String double7s = "/src/images/double7s.png";
+	String triple7s = "/src/images/triple7s.png";
+	String cherries = "/src/images/cherries.png";
+	String trip7sWinner = "/src/images/3x7sWinner.png";
 	
 	// String array to store images // TODO: delete array?
 	String[] icons = {singleBar, doubleBar, tripleBar, single7,
 					  double7s, triple7s, cherries, trip7sWinner};
 	
 	// Image and ImageView objects to store images and animations
-	Image reelImage = null;
-	ImageView displayReel = null;
-	Pane pane = null;
+	Image reelImage;
+	ImageView displayReel;
+	Pane pane;
 	Image imageAnimation = null;
 	ImageView displayAnimation = null;
 	Pane pane2 = null;
 	
-	/** constructor sets the initial reel values */
+	// constructor sets the initial reel values
 	public Reel() {
 		pane = new Pane();
 		reelImage = new Image("file:" + absolutePath + trip7sWinner);
@@ -66,9 +67,8 @@ public class Reel {
 		setDisplayReel(pane);
 	}
 	
-	/** method uses random generator to select image for reel to display
-	 * and returns its String value */
-	public String spinReel() { 
+	// uses random generator to select image for reel to display when animation stops and returns its String value
+	public String spinReel() { // todo condense repeated code into method
 				
 		String reelValue = null;
 		randNum = new Random();
@@ -160,7 +160,7 @@ public class Reel {
 	}
 	
 	/** creates a new animation to display and returns it in a pane */
-	public Pane setAnimation() {
+	public Pane setAnimation() { // todo: not used?
 		pane2 = new Pane();
 		imageAnimation = new Image("file:" + absolutePath + reelAnimation);
 		displayAnimation = new ImageView(imageAnimation);
@@ -172,21 +172,21 @@ public class Reel {
 		return pane2;
 	}
 	
-	/** sets the static image of reel */
+	// sets the static image of reel
 	public void setDisplayReel(Pane reelPane) {
 		this.reelPane = reelPane;
 	}
 	
-	/** returns the static image of reel */
+	// returns the static image of reel
 	public Pane getDisplayReel() {
 		return reelPane;
 	}
 	
-	/** creates a line transition path for images to animate on */
+	// creates a line path for images to animate on
 	public PathTransition setTransition(ImageView image, int vPos1, int vPos2){
 		
 		//creates a vertical line transition path
-		int xPos = (int) Math.round(150 * scalar);
+		int xPos = (int) Math.round(150 * scalar); // todo
 		Path vLinePath = new Path();
 		vLinePath.getElements().add(new MoveTo(xPos, vPos1));
 		vLinePath.getElements().add(new LineTo(xPos, vPos2));
@@ -201,15 +201,15 @@ public class Reel {
 		return pathTrans;
 	}
 	
-	/** creates an animated pane and returns it */
+	// returns an animated pane
 	public Pane createAnimatedPane(){
 		
 		//images to animate
 		Group group = new Group();
-		String single7 = "/src/single7.png";
-		String singleBar = "/src/singleBar.png";
-		String doubleBar = "/src/doubleBar.png";
-		String cherries = "/src/cherries.png";
+		String single7 = "/src/images/single7.png";
+		String singleBar = "/src/images/singleBar.png";
+		String doubleBar = "/src/images/doubleBar.png";
+		String cherries = "/src/images/cherries.png";
 		
 		// directory for images
 		String absolutePath = System.getProperty("user.dir");
@@ -217,7 +217,7 @@ public class Reel {
 		// create image objects to animate 
 	    Image seven = new Image("file:" + absolutePath + single7);
 	    ImageView viewSeven = new ImageView(seven);
-	    viewSeven.setFitWidth(300 * scalar);
+	    viewSeven.setFitWidth(300 * scalar); // todo
 	    viewSeven.setFitHeight(300 * scalar);
 	      
 	    Image doubleBars = new Image("file:" + absolutePath + doubleBar);
@@ -252,8 +252,7 @@ public class Reel {
 		tPath3.setInterpolator(Interpolator.LINEAR);
 		tPath4.setInterpolator(Interpolator.LINEAR);
 		
-		// set images on transition path from one horizontal 
-		// position to another horizontal position (straight line)
+		// set images on transition path from one horizontal position to another horizontal position (straight line)
 		int hPos1 = (int) Math.round(300 * scalar),
 			hPos2 = (int) Math.round(1000 * scalar),
 			hPos3 = (int) Math.round(-50 * scalar),
@@ -283,17 +282,16 @@ public class Reel {
 			tPath4 = setTransition(viewDoubleBar, hPos7, hPos8);
 		}
 		
-		// parallel transition allows multiple animations
-		// to display simultaneously
-		ParallelTransition parallelTrans = new ParallelTransition
-										   (tPath1, tPath2, tPath3, tPath4);
+		// parallel transition allows multiple animations to display simultaneously
+		ParallelTransition parallelTrans = new ParallelTransition(tPath1, tPath2, tPath3, tPath4);
 		parallelTrans.setInterpolator(Interpolator.LINEAR);
 		parallelTrans.play();
 		
 		// adds elements to pane to return
 		Pane animatedPane = new Pane();
-		// masks the image to only show a 300, 300 square
-		int clipDimension = (int) Math.round(300 * scalar);
+
+		// masks the image to only show a square with specified dimensions
+		int clipDimension = (int) Math.round(300 * scalar); //todo
 		Rectangle clipShape = new Rectangle(clipDimension, clipDimension);
 		animatedPane.setMaxHeight(clipDimension);
 		animatedPane.setClip(clipShape);
