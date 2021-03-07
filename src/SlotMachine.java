@@ -33,7 +33,7 @@ import javafx.util.Duration;
 public class SlotMachine extends Application {
 	
 	// scales the interface for different size screens todo: scale entire application
-	private static final double SCALAR = .7;
+	private static final double SCALAR = .7f;
 
 	// default width and height for game window
 	private static final int WINDOW_WIDTH = 1100;
@@ -49,20 +49,20 @@ public class SlotMachine extends Application {
 	private int bet = 1; // default bet amount
 	private int maxBet = 5;
 	private int creditsPaid,
-							creditsWon,
-							credits,
-							updatedCredits;
+			creditsWon,
+			credits,
+			updatedCredits;
 
 	// multipliers for winnings
 	private static final int MULTIPLIER1 = 1,
-													 MULTIPLIER2 = 3,
-													 MULTIPLIER3 = 5,
-													 MULTIPLIER4 = 10,
-													 MULTIPLIER5 = 15,
-													 MULTIPLIER6 = 25,
-													 MULTIPLIER7 = 50,
-													 MULTIPLIER8 = 75,
-													 JACKPOT_MULTIPLIER = 1000;
+			MULTIPLIER2 = 3,
+			MULTIPLIER3 = 5,
+			MULTIPLIER4 = 10,
+			MULTIPLIER5 = 15,
+			MULTIPLIER6 = 25,
+			MULTIPLIER7 = 50,
+			MULTIPLIER8 = 75,
+			JACKPOT_MULTIPLIER = 1000;
 	
 	// Array to hold dollar amounts. Amounts are displayed in the "add cash" dialog
 	private static final Integer[] dollarAmounts = {1, 5, 10, 20, 50, 100};
@@ -74,38 +74,38 @@ public class SlotMachine extends Application {
 
 	// String representation of a reel's image, e.g. "cherries" or "triple7s"
 	private String reel1Value,
-								 reel2Value,
-								 reel3Value;
+			reel2Value,
+			reel3Value;
 
 	// UI components
 	private TextField creditsField,
-										betField,
-										paidField;
+			betField,
+			paidField;
 
 	private Text creditsText,
-							 betText,
-							 paidText;
+			betText,
+			paidText;
 
 	private Button addBetBtn,
-								 minusBetBtn,
-								 addCashBtn,
-								 cashOutBtn,
-								 spinBtn;
+			minusBetBtn,
+			addCashBtn,
+			cashOutBtn,
+			spinBtn;
 
 	// Reels, e.g. "firstReel", display static image
 	// Animations, e.g. "firstAnimation", display motion
 	private Pane firstReel,
-							 secondReel,
-							 thirdReel,
-						   firstAnimation,
-							 secondAnimation,
-							 thirdAnimation;
+			secondReel,
+			thirdReel,
+			firstAnimation,
+			secondAnimation,
+			thirdAnimation;
 
 	private HBox hBoxTop; // Container for top image
 	private GridPane gridPane; // Container for game UI elements
 
 	// find user directory to create path for files
-	private String absolutePath = System.getProperty("user.dir");
+	private static final String ABSOLUTE_PATH = System.getProperty("user.dir");
 
 	public void start(Stage mainStage) {
 
@@ -131,28 +131,6 @@ public class SlotMachine extends Application {
 		mainStage.setTitle("Stardust - Lucky Sevens");
 		mainStage.initStyle(StageStyle.UTILITY);
 		mainStage.show();
-	}
-
-
-	// creates a dialog box that warns the user that they are out of money and allows them to add cash
-	// returns dollar amount chosen from drop down list
-		public int addCash() {
-		int dollarAmt = 0;
-
-		// dialog displays a drop down list of dollar amounts, default is $1
-		ChoiceDialog<Integer> addCashDialog = new ChoiceDialog<> (1, dollarAmounts);
-		addCashDialog.setTitle("You need more credits!");
-		addCashDialog.setHeaderText("Add cash to play.");
-		addCashDialog.setContentText("Select a dollar amount to add.    $");
-
-		// Optional will only have the value "isPresent() if "ok" button clicked, else it will return isEmpty()
-		Optional<Integer> btnClickResult = addCashDialog.showAndWait();
-
-		// condition will only be true if user clicks "ok", false if "cancel" button clicked
-		if(btnClickResult.isPresent()) {
-			dollarAmt = addCashDialog.getSelectedItem();
-		}
-		return dollarAmt;
 	}
 
 	// initialize the "credits", "bet", and "winner paid" fields
@@ -223,36 +201,23 @@ public class SlotMachine extends Application {
 
 		int modBtnScale = (int) Math.round(defaultBtnScale * SCALAR); // modified button scale
 
-		// create "ADD BET" button
-		addBetBtn = new Button("ADD BET");
-		addBetBtn.setScaleX(modBtnScale);
-		addBetBtn.setScaleY(modBtnScale);
-		addBetBtn.setStyle("-fx-base: #14425a;");
+		// create buttons
+		addBetBtn = createButton(modBtnScale, "ADD BET");
+		minusBetBtn = createButton(modBtnScale, "MINUS BET");
+		addCashBtn = createButton(modBtnScale,"ADD CASH");
+		cashOutBtn = createButton(modBtnScale,"CASHOUT");
 
-		// create "MINUS BET" button
-		minusBetBtn = new Button("MINUS BET");
-		minusBetBtn.setScaleX(modBtnScale);
-		minusBetBtn.setScaleY(modBtnScale);
-		minusBetBtn.setStyle("-fx-base: #14425a");
-
-		// create "ADD CASH" button
-		addCashBtn = new Button("ADD CASH");
-		addCashBtn.setScaleX(modBtnScale);
-		addCashBtn.setScaleY(modBtnScale);
-		addCashBtn.setStyle("-fx-base: #14425a");
-
-		// create "CASHOUT" button
-		cashOutBtn = new Button("CASHOUT");
-		cashOutBtn.setScaleX(modBtnScale);
-		cashOutBtn.setScaleY(modBtnScale);
-		cashOutBtn.setStyle("-fx-base: #14425a");
-
-		// creates "SPIN" button
-		spinBtn = new Button("SPIN");
+		// spin button has larger scale
 		int modSpinBtnScale = (int) Math.round(defaultSpinBtnScale * SCALAR); // modified spin button scale
-		spinBtn.setScaleX(modSpinBtnScale);
-		spinBtn.setScaleY(modSpinBtnScale);
-		spinBtn.setStyle("-fx-base: #14425a;");
+		spinBtn = createButton(modSpinBtnScale,"SPIN");
+	}
+
+	private Button createButton(int buttonScale, String label) {
+		Button button = new Button(label);
+		button.setScaleX(buttonScale);
+		button.setScaleY(buttonScale);
+		button.setStyle("-fx-base: #14425a;");
+		return button;
 	}
 
 	// initialize button listeners for all game buttons and define behaviors
@@ -321,7 +286,7 @@ public class SlotMachine extends Application {
 		int hBoxInsetTop = (int) Math.round(DEFAULT_TOP_PADDING * SCALAR); // modified top padding
 
 		// initialize top image and style
-		Image imgStardust = new Image("file:" + absolutePath + "/src/images/stardustLarger.gif");
+		Image imgStardust = new Image("file:" + ABSOLUTE_PATH + "/src/images/stardustLarger.gif");
 		ImageView stardustImgView = new ImageView(imgStardust);
 		stardustImgView.setFitWidth(DEFAULT_TOP_IMAGE_WIDTH * SCALAR);
 		stardustImgView.setFitHeight(DEFAULT_TOP_IMAGE_HEIGHT * SCALAR);
@@ -350,26 +315,26 @@ public class SlotMachine extends Application {
 
 		// create new horizontal box to contain "add bet" and "minus bet" buttons
 		HBox adjustBetBox = new HBox(DEFAULT_BUTTON_BOX_SPACING);
-		adjustBetBox.setAlignment(Pos.CENTER);
+		adjustBetBox.setAlignment(Pos.BOTTOM_CENTER);
 		adjustBetBox.getChildren().add(addBetBtn);
 		adjustBetBox.getChildren().add(minusBetBtn);
 
 		// create new horizontal box to contain "add cash" and "cash out" buttons
 		HBox playOrQuitBox = new HBox(DEFAULT_BUTTON_BOX_SPACING);
-		playOrQuitBox.setAlignment(Pos.CENTER);
+		playOrQuitBox.setAlignment(Pos.BOTTOM_CENTER);
 		playOrQuitBox.getChildren().add(addCashBtn);
 		playOrQuitBox.getChildren().add(cashOutBtn);
 
 		// columns for gridPane holding UI elements
-		final int col0 = 0,
-							col1 = 1,
-							col2 = 2;
+		final int COL0 = 0,
+				COL1 = 1,
+				COL2 = 2;
 
 		// rows for gridPane holding UI elements
-		final int row1 = 1,
-							row2 = 2,
-							row3 = 3,
-							row4 = 4;
+		final int ROW1 = 1,
+				ROW2 = 2,
+				ROW3 = 3,
+				ROW4 = 4;
 
 		// add arranges all UI components in a grid
 		gridPane = new GridPane();
@@ -382,29 +347,50 @@ public class SlotMachine extends Application {
 		gridPane.setVgap(verticalGap);
 
 		// add all components to gridPane layout
-		gridPane.add(adjustBetBox, col0, row4); // "add bet" & "minus bet" buttons
-		gridPane.add(hBoxBottom, col1, row4); // "spin" button
-		gridPane.add(playOrQuitBox, col2, row4); // "add cash" & "cash out" buttons
+		gridPane.add(adjustBetBox, COL0, ROW4); // "add bet" & "minus bet" buttons
+		gridPane.add(hBoxBottom, COL1, ROW4); // "spin" button
+		gridPane.add(playOrQuitBox, COL2, ROW4); // "add cash" & "cash out" buttons
 
 		// add static images to the Panes that display reels
-		gridPane.add(firstReel, col0, row1);
-		gridPane.add(secondReel, col1, row1);
-		gridPane.add(thirdReel, col2, row1);
+		gridPane.add(firstReel, COL0, ROW1);
+		gridPane.add(secondReel, COL1, ROW1);
+		gridPane.add(thirdReel, COL2, ROW1);
 
 		// credits, bet, and paid fields
-		gridPane.add(creditsField, col0, row2);
-		gridPane.add(betField, col1, row2);
-		gridPane.add(paidField, col2, row2);
+		gridPane.add(creditsField, COL0, ROW2);
+		gridPane.add(betField, COL1, ROW2);
+		gridPane.add(paidField, COL2, ROW2);
 
 		// descriptions of fields above
-		gridPane.add(creditsText, col0, row3);
-		gridPane.add(betText, col1, row3);
-		gridPane.add(paidText, col2, row3);
+		gridPane.add(creditsText, COL0, ROW3);
+		gridPane.add(betText, COL1, ROW3);
+		gridPane.add(paidText, COL2, ROW3);
 
 		// center the text inside its cell
 		GridPane.setHalignment(creditsText, HPos.CENTER);
 		GridPane.setHalignment(betText, HPos.CENTER);
 		GridPane.setHalignment(paidText, HPos.CENTER);
+	}
+
+	// creates a dialog box that warns the user that they are out of money and allows them to add cash
+	// returns dollar amount chosen from drop down list
+	public int addCash() {
+		int dollarAmt = 0;
+
+		// dialog displays a drop down list of dollar amounts, default is $1
+		ChoiceDialog<Integer> addCashDialog = new ChoiceDialog<> (1, dollarAmounts);
+		addCashDialog.setTitle("You need more credits!");
+		addCashDialog.setHeaderText("Add cash to play.");
+		addCashDialog.setContentText("Select a dollar amount to add.    $");
+
+		// Optional will only have the value "isPresent() if "ok" button clicked, else it will return isEmpty()
+		Optional<Integer> btnClickResult = addCashDialog.showAndWait();
+
+		// condition will only be true if user clicks "ok", false if "cancel" button clicked
+		if(btnClickResult.isPresent()) {
+			dollarAmt = addCashDialog.getSelectedItem();
+		}
+		return dollarAmt;
 	}
 
 	// determines proper pay out based on all three reels matching
@@ -526,12 +512,13 @@ public class SlotMachine extends Application {
 				// audio to indicate reel stopped spinning
 				playAudioClip("audio/reelStop.wav");
 
+				// after third reel stops, check all reels' values to determine if there is a winning combo
 				handleWinningCombos();
 			});
 			pauseThirdReel.play();
 		}
 
-		// check if there are winning combos and handle pay outs
+		// check if there are winning combos and award pay outs
 		private void handleWinningCombos() {
 
 			// if all three reels are equal
