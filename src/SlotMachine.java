@@ -394,8 +394,8 @@ public class SlotMachine extends Application {
 	}
 
 	// determines proper pay out based on all three reels matching
-	public int reelsMatch(String reel1) {
-		switch(reel1){
+	public int reelsMatch(String reelValue) {
+		switch(reelValue){
 			case "cherries":
 				creditsWon = MULTIPLIER2 * bet;
 				break;
@@ -488,7 +488,6 @@ public class SlotMachine extends Application {
 				gridPane.getChildren().remove(firstAnimation); // remove animation from Pane
 				gridPane.add(firstReel, 0, 1); // replace animation with static image in Pane
 				reel1Value = reel1.spinReel(); // String description of the image
-
 				playAudioClip("audio/reelStop.wav"); // audio to indicate reel stopped spinning
 			});
 			pauseFirstReel.play();
@@ -498,9 +497,7 @@ public class SlotMachine extends Application {
 				gridPane.getChildren().remove(secondAnimation); // remove animation from Pane
 				gridPane.add(secondReel, 1, 1); // replace animation with static image in Pane
 				reel2Value = reel2.spinReel(); // String description of the image
-
-				// audio to indicate reel stopped spinning
-				playAudioClip("audio/reelStop.wav");
+				playAudioClip("audio/reelStop.wav"); // audio to indicate reel stopped spinning
 			});
 			pauseSecondReel.play();
 
@@ -508,9 +505,7 @@ public class SlotMachine extends Application {
 				gridPane.getChildren().remove(thirdAnimation); // remove animation from Pane
 				gridPane.add(thirdReel, 2, 1); // replace animation with static image in Pane
 				reel3Value = reel3.spinReel(); // String description of the image
-
-				// audio to indicate reel stopped spinning
-				playAudioClip("audio/reelStop.wav");
+				playAudioClip("audio/reelStop.wav"); // audio to indicate reel stopped spinning
 
 				// after third reel stops, check all reels' values to determine if there is a winning combo
 				handleWinningCombos();
@@ -523,9 +518,7 @@ public class SlotMachine extends Application {
 
 			// if all three reels are equal
 			if(reel1Value.equals(reel2Value) && reel2Value.equals(reel3Value)) {
-
-				// play audio to indicate winner
-				playAudioClip("audio/casinoWinShort.wav");
+				playAudioClip("audio/casinoWinShort.wav"); // play audio to indicate winner
 
 				// gets proper pay out and updates credit field
 				creditsPaid = reelsMatch(reel1Value);
@@ -533,9 +526,7 @@ public class SlotMachine extends Application {
 
 				// if all three reels contain bars but are not equal e.g. singleBar + doubleBar + doubleBar
 			} else if(reel1Value.contains("Bar") && reel2Value.contains("Bar") && reel3Value.contains("Bar")) {
-
-				//play sound to indicate winner
-				playAudioClip("audio/casinoWinShort.wav");
+				playAudioClip("audio/casinoWinShort.wav"); //play sound to indicate winner
 
 				// gets proper pay out and updates credit field
 				creditsPaid = nonMatchedBars();
@@ -543,9 +534,7 @@ public class SlotMachine extends Application {
 
 				// if all reels contain 7's but are not equal e.g. single7 + double7 + triple7
 			} else if(reel1Value.contains("7") && reel2Value.contains("7") && reel3Value.contains("7")) {
-
-				// play sound to indicate winner
-				playAudioClip("audio/casinoWinShort.wav");
+				playAudioClip("audio/casinoWinShort.wav"); // play sound to indicate winner
 
 				// determines proper pay out and updates credit field
 				creditsPaid = nonMatchedSevens();
@@ -562,10 +551,8 @@ public class SlotMachine extends Application {
 
 		// replaces static images in Panes with animations
 		private void animateReels() {
-
-			// replaces static images with animated reels
-			gridPane.getChildren().remove(firstReel);
-			gridPane.add(firstAnimation, 0 , 1);
+			gridPane.getChildren().remove(firstReel); // remove static image
+			gridPane.add(firstAnimation, 0 , 1); // replace with animation
 			gridPane.getChildren().remove(secondReel);
 			gridPane.add(secondAnimation, 1, 1);
 			gridPane.getChildren().remove(thirdReel);
