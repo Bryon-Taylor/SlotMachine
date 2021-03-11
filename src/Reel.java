@@ -16,15 +16,18 @@ import javafx.scene.shape.Path;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import static java.lang.Math.round;
+import static java.lang.Math.toIntExact;
+
 public class Reel {
+
+	// scales the interface for different size screens
+	private static final double SCALE_FACTOR = 0.7;
 	
 	// used to change image animation order for all three Reels
 	private static boolean
 			firstOrderAvailable = true,
 			secondOrderAvailable = true;
-
-	// scales the interface for different size screens
-	private static final double SCALAR = 0.9;
 
 	// for images
 	private Pane reelPane; // pane displays images
@@ -40,17 +43,17 @@ public class Reel {
 
 	// start and end y-coordinates on line path
 	private static final int
-			Y_START_1 = (int) Math.round(300 * SCALAR),
-			Y_END_1 = (int) Math.round(1000 * SCALAR),
+			Y_START_1 = toIntExact(round(300 * SCALE_FACTOR)),
+			Y_END_1 = toIntExact(round(1000 * SCALE_FACTOR)),
 
-			Y_START_2 = (int) Math.round(-50 * SCALAR),
-			Y_END_2 = (int) Math.round(650 * SCALAR),
+			Y_START_2 = toIntExact(round(-50 * SCALE_FACTOR)),
+			Y_END_2 = toIntExact(round(650 * SCALE_FACTOR)),
 
-			Y_START_3 = (int) Math.round(-500 * SCALAR),
-			Y_END_3 = (int) Math.round(500 * SCALAR),
+			Y_START_3 = toIntExact(round(-500 * SCALE_FACTOR)),
+			Y_END_3 = toIntExact(round(500 * SCALE_FACTOR)),
 
-			Y_START_4 = (int) Math.round(-650 * SCALAR),
-			Y_END_4 = (int) Math.round(250 * SCALAR);
+			Y_START_4 = toIntExact(round(-650 * SCALE_FACTOR)),
+			Y_END_4 = toIntExact(round(250 * SCALE_FACTOR));
 
 	// paths to images
 	private static final String
@@ -82,7 +85,7 @@ public class Reel {
 	public String spinReel() {
 		String reelValue = null;
 		Random randNum = new Random();
-		int reelNum = randNum.nextInt(NUM_IMAGES); // random number between 0 - 7
+		int reelNum = randNum.nextInt(NUM_IMAGES); // random number between the number of images (0 - 7)
 
 		// select image to display based on the random number, String reelValue is used in SlotMachine.java's
 		// handleWinningCombos() method to determine if there is a winner
@@ -91,37 +94,30 @@ public class Reel {
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_SINGLE_BAR));
 			reelValue = "singleBar";
 			break;
-			
 		case 1:
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_DOUBLE_BAR));
 			reelValue = "doubleBar";
 			break;
-		
 		case 2:
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIPLE_BAR));
 			reelValue = "tripleBar";
 			break;
-			
 		case 3:
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_SINGLE_7));
 			reelValue = "single7";
 			break;
-			
 		case 4:
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_DOUBLE_7));
 			reelValue = "double7s";
 			break;
-			
 		case 5:
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIPLE_7));
 			reelValue = "triple7s";
 			break;
-			
 		case 6:
 			setReelImage(new Image( ABSOLUTE_PATH + IMG_CHERRIES));
 			reelValue = "cherries";
 			break;
-			
 		case 7:
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIP_7_WINNER));
 			reelValue = "trip7sWinner";
@@ -130,11 +126,11 @@ public class Reel {
 		return reelValue;
 	}
 
-	// sets the reel image after animation stops spinning
+	// sets the reel image during first initialization or when animation stops spinning
 	private void setReelImage(Image reelImage) {
 		ImageView displayReel = new ImageView(reelImage);
-		displayReel.setFitWidth(IMAGE_DIMENS * SCALAR);
-		displayReel.setFitHeight(IMAGE_DIMENS * SCALAR);
+		displayReel.setFitWidth(IMAGE_DIMENS * SCALE_FACTOR);
+		displayReel.setFitHeight(IMAGE_DIMENS * SCALE_FACTOR);
 		pane.getChildren().add(displayReel);
 		setDisplayReel(pane);
 	}
@@ -158,7 +154,7 @@ public class Reel {
 		ImageView viewSingleBar = getImageView(new Image(ABSOLUTE_PATH + IMG_SINGLE_BAR));
 		ImageView viewCherries = getImageView(new Image(ABSOLUTE_PATH + IMG_CHERRIES));
 
-		// group images to later add to a Pane
+		// group images to add to animatedPane
 		Group group = new Group();
 		group.getChildren().add(viewSingle7);
 		group.getChildren().add(viewDoubleBar);
@@ -182,7 +178,7 @@ public class Reel {
 
 		// masks the image to only show a square with specified dimensions
 		Pane animatedPane = new Pane();
-		int clipDimension = (int) Math.round(IMAGE_DIMENS * SCALAR);
+		int clipDimension = toIntExact(round(IMAGE_DIMENS * SCALE_FACTOR));
 		Rectangle clipShape = new Rectangle(clipDimension, clipDimension); // clipShape is a mask
 		animatedPane.setMaxHeight(clipDimension);
 		animatedPane.setClip(clipShape); // apply mask
@@ -190,11 +186,12 @@ public class Reel {
 		return animatedPane;
 	}
 
-	// creates a vertical line path for images to animate on
+	// creates a vertical line path for images to animate on, yPos = y coordinate
 	private PathTransition setTransition(ImageView image, int yPos1, int yPos2){
 
 		// creates a vertical line transition path
-		int xPos = (int) Math.round((IMAGE_DIMENS / 2.0) * SCALAR); // (IMAGE_DIMENS / 2.0) keeps x position centered in Pane
+		// (IMAGE_DIMENS / 2.0) keeps x position centered in Pane
+		int xPos = toIntExact(round((IMAGE_DIMENS / 2.0) * SCALE_FACTOR));
 		Path vLinePath = new Path();
 		vLinePath.getElements().add(new MoveTo(xPos, yPos1)); // beginning coordinates
 		vLinePath.getElements().add(new LineTo(xPos, yPos2)); // ending coordinates
@@ -209,7 +206,7 @@ public class Reel {
 		return pathTrans;
 	}
 
-	// first arg is object to translate, second arg is starting vertical position, third arg is ending vertical position
+	// first arg is object to translate, second arg is starting y-coordinate, third arg is ending y-coordinate
 	private void changeReelImageOrder(ImageView iv1, ImageView iv2, ImageView iv3, ImageView iv4) {
 		tPath1 = setTransition(iv1, Y_START_1, Y_END_1);
 		tPath2 = setTransition(iv2, Y_START_2, Y_END_2);
@@ -220,8 +217,8 @@ public class Reel {
 	// return an ImageView container from the passed image path
 	private ImageView getImageView(Image image) {
 		ImageView imgView = new ImageView(image);
-		imgView.setFitWidth(IMAGE_DIMENS * SCALAR);
-		imgView.setFitHeight(IMAGE_DIMENS * SCALAR);
+		imgView.setFitWidth(IMAGE_DIMENS * SCALE_FACTOR);
+		imgView.setFitHeight(IMAGE_DIMENS * SCALE_FACTOR);
 		return imgView;
 	}
 }

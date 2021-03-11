@@ -1,9 +1,3 @@
-/** Author: Bryon Taylor
- *
- *  
- *  This application simulates a slot machine. Good luck!
- */
-
 import java.util.Optional;
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
@@ -23,7 +17,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Box;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -31,22 +24,30 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+import static java.lang.Math.round;
+import static java.lang.Math.toIntExact;
+
+/**
+ *	Author: Bryon Taylor
+ *  This application simulates a slot machine. Good luck!
+ */
+
 public class SlotMachine extends Application {
 
 	// scales the interface for different size screens
-	private static final double SCALAR = 0.9;
+	private static final double SCALE_FACTOR = 0.7;
 
 	// default width and height for game window
 	private static final int WINDOW_WIDTH = 1100;
 	private static final int WINDOW_HEIGHT = 1025;
 
-	// default sizes for fields and their fonts // todo local?
+	// default sizes for fields and their fonts
 	private static final int FONT_SIZE_FIELDS = 30;
 	private static final int FONT_SIZE_FIELD_DESCRIPTION = 35;
 	private static final int FIELD_WIDTH = 300;
 	private static final int FIELD_HEIGHT = 50;
 
-	// multipliers for winnings
+	// different multipliers are applied for different winning combinations
 	private static final int
 			MULTIPLIER1 = 1,
 			MULTIPLIER2 = 3,
@@ -76,13 +77,13 @@ public class SlotMachine extends Application {
 	private static final Integer[] DOLLAR_AMOUNTS = {1, 5, 10, 20, 50, 100};
 
 	// variables to manage bets and credits
-	private int bet = 1; // default bet amount todo
+	private int bet = 1; // default bet amount
 	private int
 			creditsPaid,
 			creditsWon,
 			credits;
 
-	// Reel objects that display static images when the Reel is stopped or animated images otherwise
+	// Reel objects display static images when the Reel is stopped or animated images otherwise
 	private Reel
 			reel1,
 			reel2,
@@ -112,8 +113,8 @@ public class SlotMachine extends Application {
 			cashOutBtn,
 			spinBtn;
 
-	// Reels, e.g. "firstReel", display static image
-	// Animations, e.g. "firstAnimation", display motion
+	// Reels, e.g. "firstReel", are containers that display static images
+	// Animations, e.g. "firstAnimation", are containers that display motion
 	private Pane
 			firstReel,
 			secondReel,
@@ -143,16 +144,14 @@ public class SlotMachine extends Application {
 
 		// add components to stage
 		GridPane root = new GridPane();
-		root.setMaxWidth(WINDOW_WIDTH);
-		root.setGridLinesVisible(false); // todo
 		root.setBackground(new Background(new BackgroundFill(Color.BLACK, null, null)));
 		root.setAlignment(Pos.TOP_CENTER);
 		root.add(topImgPane, COL0, ROW0);
 		root.add(gridPane, COL0, ROW1);
 
-		// game window dimensions
-		int width = (int) Math.round(WINDOW_WIDTH * SCALAR);
-		int height = (int) Math.round(WINDOW_HEIGHT * SCALAR);
+		// scaled game window dimensions - uses Math.toIntExact to safely cast to int
+		int width = toIntExact(round(WINDOW_WIDTH * SCALE_FACTOR));
+		int height = toIntExact(round(WINDOW_HEIGHT * SCALE_FACTOR));
 
 		Scene scene = new Scene(root, width, height, null);
 		mainStage.setScene(scene);
@@ -171,9 +170,9 @@ public class SlotMachine extends Application {
 	private TextField getStyledTextField(int fieldValue) {
 		TextField textField = new TextField(String.valueOf(fieldValue));
 		textField.setAlignment(Pos.CENTER_RIGHT);
-		textField.setFont(new Font("SansSerif", (int) Math.round(FONT_SIZE_FIELDS * SCALAR)));
+		textField.setFont(new Font("SansSerif", toIntExact(round(FONT_SIZE_FIELDS * SCALE_FACTOR))));
 		textField.setEditable(false);
-		textField.setPrefSize((int) Math.round(FIELD_WIDTH * SCALAR), (int) Math.round(FIELD_HEIGHT * SCALAR));
+		textField.setPrefSize(toIntExact(round(FIELD_WIDTH * SCALE_FACTOR)), toIntExact(round(FIELD_HEIGHT * SCALE_FACTOR)));
 		return textField;
 	}
 
@@ -185,7 +184,7 @@ public class SlotMachine extends Application {
 	}
 
 	private Text getFormattedText(String label) {
-		int fontSize = (int) Math.round(FONT_SIZE_FIELD_DESCRIPTION * SCALAR);
+		int fontSize = toIntExact(round(FONT_SIZE_FIELD_DESCRIPTION * SCALE_FACTOR));
 		Text text = new Text(label);
 		text.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
 		text.setFill(Color.FIREBRICK);
@@ -199,7 +198,7 @@ public class SlotMachine extends Application {
 		final int smallBtnFontSize = 18;
 		final int spinBtnFontSize = 45;
 
-		int intFontSize = (int) Math.round(smallBtnFontSize * SCALAR);
+		int intFontSize = toIntExact(round(smallBtnFontSize * SCALE_FACTOR));
 		String strFontSize = String.valueOf(intFontSize);
 
 		// create buttons (font size, label)
@@ -209,7 +208,7 @@ public class SlotMachine extends Application {
 		cashOutBtn = createButton(strFontSize,"CASHOUT");
 
 		// spin button has larger font size which makes button larger than the rest
-		intFontSize = (int) Math.round(spinBtnFontSize * SCALAR);
+		intFontSize = toIntExact(round(spinBtnFontSize * SCALE_FACTOR));
 		strFontSize = String.valueOf(intFontSize);
 		spinBtn = createButton((strFontSize),"SPIN");
 	}
@@ -219,7 +218,7 @@ public class SlotMachine extends Application {
 		String fontStyleSize = "-fx-font-size:" + fontSize + ";";
 		button.setStyle("-fx-background-color: #000000, linear-gradient(#56a8e3, #2f73a3)," +
 				"linear-gradient(#14425a, #14425a);" +
-				"-fx-background-radius: 3;" +
+				"-fx-background-radius: 4;" +
 				"-fx-text-fill: white;" +
 				fontStyleSize);
 		return button;
@@ -287,7 +286,7 @@ public class SlotMachine extends Application {
 		final int winningLightsHeight = 350;
 
 		// bottom Pane parameters
-		final int buttonBoxSpacing = 10;
+		final int buttonBoxSpacing = 15;
 		final int bottomPaneHGap = 25;
 		final int bottomPaneVGap = 15;
 		final int spinBtnBoxTopPadding = 30;
@@ -300,28 +299,27 @@ public class SlotMachine extends Application {
 		// initialize top image and style
 		Image imgStardust = new Image("file:" + ABSOLUTE_PATH + "/src/images/stardustLarger.gif");
 		ImageView stardustImgView = new ImageView(imgStardust);
-		stardustImgView.setFitWidth(topImageWidth * SCALAR);
-		stardustImgView.setFitHeight(topImageHeight * SCALAR);
+		stardustImgView.setFitWidth(topImageWidth * SCALE_FACTOR);
+		stardustImgView.setFitHeight(topImageHeight * SCALE_FACTOR);
 
 		winningLightsLeft = new ImageView(new Image(
 				"file:" + ABSOLUTE_PATH + "/src/images/chasingLightsBlue.gif"));
 		winningLightsRight = new ImageView(new Image(
 				"file:" + ABSOLUTE_PATH + "/src/images/chasingLightsBlue2.gif"));
 
-		// initialize gridPane container for top elements
+		// initialize gridPane container for top images, logo and winning lights
 		topImgPane = new GridPane();
-		topImgPane.setGridLinesVisible(false); // todo
 		topImgPane.setHgap(topPaneHGap);
-		topImgPane.setPadding(new Insets(topPaneTopPadding, 0, 0, 0));
+		topImgPane.setPadding(new Insets(topPaneTopPadding * SCALE_FACTOR, 0, 0, 0));
 		topImgPane.setAlignment(Pos.TOP_CENTER);
 
 		// initialize animated lights but don't set visible until there is a win
-		winningLightsLeft.setFitWidth(winningLightsWidth * SCALAR);
-		winningLightsLeft.setFitHeight(winningLightsHeight * SCALAR);
+		winningLightsLeft.setFitWidth(winningLightsWidth * SCALE_FACTOR);
+		winningLightsLeft.setFitHeight(winningLightsHeight * SCALE_FACTOR);
 		winningLightsLeft.setVisible(false);
 
-		winningLightsRight.setFitWidth(winningLightsWidth * SCALAR);
-		winningLightsRight.setFitHeight(winningLightsHeight * SCALAR);
+		winningLightsRight.setFitWidth(winningLightsWidth * SCALE_FACTOR);
+		winningLightsRight.setFitHeight(winningLightsHeight * SCALE_FACTOR);
 		winningLightsRight.setVisible(false);
 
 		// add elements to top gridPane
@@ -329,7 +327,7 @@ public class SlotMachine extends Application {
 		topImgPane.add(winningLightsLeft, COL0 , ROW0);
 		topImgPane.add(winningLightsRight, COL2, ROW0 );
 
-		// initializes reels to all triple 7's image
+		// sets the Pane to a static image
 		firstReel = reel1.getDisplayReel();
 		secondReel = reel2.getDisplayReel();
 		thirdReel = reel3.getDisplayReel();
@@ -342,41 +340,33 @@ public class SlotMachine extends Application {
 		// create a new horizontal box for the "spin" button
 		HBox spinBtnBox = new HBox();
 		spinBtnBox.setAlignment(Pos.BOTTOM_CENTER);
-		spinBtnBox.setPadding((new Insets((int) Math.round(spinBtnBoxTopPadding * SCALAR), 0, 0, 0)));
+		spinBtnBox.setPadding((new Insets(toIntExact(round(spinBtnBoxTopPadding * SCALE_FACTOR)), 0, 0, 0)));
 		spinBtnBox.getChildren().add(spinBtn);
 
 		// create new horizontal box to contain "add bet" and "minus bet" buttons
-		HBox adjustBetBox = new HBox(buttonBoxSpacing);
+		HBox adjustBetBox = new HBox(buttonBoxSpacing * SCALE_FACTOR);
 		adjustBetBox.setAlignment(Pos.CENTER);
 		adjustBetBox.getChildren().add(addBetBtn);
 		adjustBetBox.getChildren().add(minusBetBtn);
 
-
-
 		// create new horizontal box to contain "add cash" and "cash out" buttons
-		HBox playOrQuitBox = new HBox(buttonBoxSpacing);
+		HBox playOrQuitBox = new HBox(buttonBoxSpacing * SCALE_FACTOR);
 		playOrQuitBox.setAlignment(Pos.CENTER);
 		playOrQuitBox.getChildren().add(addCashBtn);
 		playOrQuitBox.getChildren().add(cashOutBtn);
 
-		// add arranges all UI components in a grid
+		// add arranges all UI components in a grid below the GridPane that contains top images
 		gridPane = new GridPane();
-		gridPane.setGridLinesVisible(false); // todo
 		gridPane.setAlignment(Pos.TOP_CENTER);
-		gridPane.setMaxWidth(WINDOW_WIDTH); // todo
 
 		// set spacing gaps between bottom pane elements
-		gridPane.setHgap((int) (bottomPaneHGap * SCALAR));
-		gridPane.setVgap((int) (bottomPaneVGap * SCALAR));
+		gridPane.setHgap(toIntExact(round(bottomPaneHGap * SCALE_FACTOR)));
+		gridPane.setVgap(toIntExact(round(bottomPaneVGap * SCALE_FACTOR)));
 
 		// add all components to bottom gridPane layout
 		gridPane.add(adjustBetBox, COL0, ROW4); // "add bet" & "minus bet" buttons
-		gridPane.add(spinBtnBox, COL1, ROW4); // "spin" button
+		gridPane.add(spinBtnBox, COL1, ROW4); // add "spin" button
 		gridPane.add(playOrQuitBox, COL2, ROW4); // "add cash" & "cash out" buttons
-
-		// todo test
-//		gridPane.add(addBetBtn, COL0, ROW4);
-//		gridPane.add(minusBetBtn, COL0, ROW4);
 
 		// add static images to the Panes that display reels
 		gridPane.add(firstReel, COL0, ROW1);
@@ -399,16 +389,16 @@ public class SlotMachine extends Application {
 		GridPane.setHalignment(paidText, HPos.CENTER);
 	}
 
-	// creates a dialog box that warns the user that they are out of money and allows them to add cash
+	// show the user a dialog box that allows them to add cash
 	// returns dollar amount chosen from drop down list
 	public int addCash() {
 		int dollarAmt = 0; // cash to be added
 
 		// dialog displays a drop down list of dollar amounts, default is $1
-		ChoiceDialog<Integer> addCashDialog = new ChoiceDialog<> (1, DOLLAR_AMOUNTS);
-		addCashDialog.setTitle("You need more credits!");
-		addCashDialog.setHeaderText("Add cash to play.");
-		addCashDialog.setContentText("Select a dollar amount to add.    $");
+		ChoiceDialog<Integer> addCashDialog = new ChoiceDialog<> (DOLLAR_AMOUNTS[0], DOLLAR_AMOUNTS);
+		addCashDialog.setTitle("Add more credits");
+		addCashDialog.setHeaderText("Select a dollar amount to add. ");
+		addCashDialog.setContentText("$");
 
 		// Optional will only have the value "isPresent() if "ok" button clicked, else it will return isEmpty()
 		Optional<Integer> btnClickResult = addCashDialog.showAndWait();
@@ -463,6 +453,7 @@ public class SlotMachine extends Application {
 		return creditsWon;
 	}
 
+	// play audio file found at filePath passed as argument
 	private void playAudioClip(String filePath) {
 		AudioClip audioClip = new AudioClip(getClass().getResource(filePath).toString());
 		audioClip.play();
@@ -479,12 +470,10 @@ public class SlotMachine extends Application {
 					pauseTime2 = 1900, // 1.9 seconds
 					pauseTime3 = 2300; // 2.3 seconds
 
-			paidField.setText("0");
-			if(creditsPaid != 0) {
-				//hBoxTop.getChildren().remove(viewCoinBurst);
+			paidField.setText("0"); // reset winnings after every spin
+			if(creditsPaid != 0) { // turn off winning lights on a new spin
 				winningLightsLeft.setVisible(false);
 				winningLightsRight.setVisible(false);
-				//hBoxTop.getChildren().add(stardustImgView);
 			}
 			creditsPaid = 0;
 			credits = Integer.parseInt(creditsField.getText()); // get current credits
