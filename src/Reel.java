@@ -24,7 +24,7 @@ public class Reel {
 			secondOrderAvailable = true;
 
 	// scales the interface for different size screens
-	private static final float SCALAR = .7f;
+	private static final double SCALAR = 0.9;
 
 	// for images
 	private Pane reelPane; // pane displays images
