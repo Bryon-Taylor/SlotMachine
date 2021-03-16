@@ -35,7 +35,7 @@ import static java.lang.Math.toIntExact;
 public class SlotMachine extends Application {
 
 	// scales the interface for different size screens
-	private static final double SCALE_FACTOR = 0.7;
+	private static final double SCALE_FACTOR = 0.9;
 
 	// default width and height for game window
 	private static final int WINDOW_WIDTH = 1100;
@@ -74,7 +74,7 @@ public class SlotMachine extends Application {
 			ROW4 = 4;
 	
 	// Array to hold dollar amounts. Amounts are displayed in the "add cash" dialog
-	private static final Integer[] DOLLAR_AMOUNTS = {1, 5, 10, 20, 50, 100};
+	private static final Integer[] DOLLAR_AMOUNTS = {1, 2, 5, 10, 20, 50, 100};
 
 	// variables to manage bets and credits
 	private int bet = 1; // default bet amount
@@ -205,7 +205,7 @@ public class SlotMachine extends Application {
 		addBetBtn = createButton(strFontSize, "ADD BET");
 		minusBetBtn = createButton(strFontSize, "MINUS BET");
 		addCashBtn = createButton(strFontSize,"ADD CASH");
-		cashOutBtn = createButton(strFontSize,"CASHOUT");
+		cashOutBtn = createButton(strFontSize,"CASH OUT");
 
 		// spin button has larger font size which makes button larger than the rest
 		intFontSize = toIntExact(round(spinBtnFontSize * SCALE_FACTOR));
@@ -391,12 +391,12 @@ public class SlotMachine extends Application {
 
 	// show the user a dialog box that allows them to add cash
 	// returns dollar amount chosen from drop down list
-	public int addCash() {
+	private int addCash() {
 		int dollarAmt = 0; // cash to be added
 
 		// dialog displays a drop down list of dollar amounts, default is $1
 		ChoiceDialog<Integer> addCashDialog = new ChoiceDialog<> (DOLLAR_AMOUNTS[0], DOLLAR_AMOUNTS);
-		addCashDialog.setTitle("Add more credits");
+		addCashDialog.setTitle("Add credits");
 		addCashDialog.setHeaderText("Select a dollar amount to add. ");
 		addCashDialog.setContentText("$");
 
@@ -411,10 +411,11 @@ public class SlotMachine extends Application {
 	}
 
 	// determines proper pay out based on all three reels matching
-	public int allReelsMatch(String reelValue) {
+	private int allReelsMatch(String reelValue) {
 		switch(reelValue){
-			case "cherries":
-				creditsWon = MULTIPLIER2 * bet;
+			case "cherries": // both cases get 8 x multiplier
+			case "triple7s":
+				creditsWon = MULTIPLIER8 * bet;
 				break;
 			case "singleBar":
 				creditsWon = MULTIPLIER3 * bet;
@@ -431,9 +432,6 @@ public class SlotMachine extends Application {
 			case "double7s":
 				creditsWon = MULTIPLIER7 * bet;
 				break;
-			case "triple7s":
-				creditsWon = MULTIPLIER8 * bet;
-				break;
 			case "trip7sWinner":
 				creditsWon = JACKPOT_MULTIPLIER * bet;
 				break;
@@ -442,14 +440,26 @@ public class SlotMachine extends Application {
 	}
 
 	// pay out for all three reels that contain bars, but don't all match
-	public int nonMatchedBars() {
+	private int nonMatchedBars() {
 		creditsWon = MULTIPLIER1 * bet;
 		return creditsWon;
 	}
 
 	// pay out for all three reels that contain 7's, but don't all match
-	public int nonMatchedSevens() {
-		creditsWon = MULTIPLIER4 * bet;
+	private int nonMatchedSevens() {
+		creditsWon = MULTIPLIER2 * bet;
+		return creditsWon;
+	}
+
+	private int nonMatchedCherries() {
+		// two cherries case
+		if(reel1Value.equals("cherries") && reel2Value.equals("cherries") ||
+				reel2Value.equals("cherries") && reel3Value.equals("cherries") ||
+				reel1Value.equals("cherries") && reel3Value.equals("cherries")) {
+			creditsWon = MULTIPLIER2 * bet;
+		} else { // single cherries case
+			creditsWon = MULTIPLIER1 * bet;
+		}
 		return creditsWon;
 	}
 
@@ -549,6 +559,9 @@ public class SlotMachine extends Application {
 				// if all reels contain 7's but are not equal e.g. single7 + double7 + triple7
 			} else if(reel1Value.contains("7") && reel2Value.contains("7") && reel3Value.contains("7")) {
 				creditsPaid = nonMatchedSevens();
+
+			} else if(reel1Value.equals("cherries") || reel2Value.equals("cherries") || reel3Value.equals("cherries")) {
+				creditsPaid = nonMatchedCherries();
 			}
 
 			// if creditsPaid doesn't equal 0 then there was a winning combo

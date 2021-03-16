@@ -22,7 +22,7 @@ import static java.lang.Math.toIntExact;
 public class Reel {
 
 	// scales the interface for different size screens
-	private static final double SCALE_FACTOR = 0.7;
+	private static final double SCALE_FACTOR = 0.9;
 	
 	// used to change image animation order for all three Reels
 	private static boolean
@@ -32,7 +32,6 @@ public class Reel {
 	// for images
 	private Pane reelPane; // pane displays images
 	private static final String ABSOLUTE_PATH = "file:" + System.getProperty("user.dir"); // image path
-	private static final int NUM_IMAGES = 8;
 
 	// paths for ImageViews to animate on
 	private PathTransition
@@ -66,62 +65,64 @@ public class Reel {
 			IMG_CHERRIES = "/src/images/cherries.png",
 			IMG_TRIP_7_WINNER = "/src/images/3x7sWinner.png";
 
-	// default width and height for square images displayed in reel
-	private static final int IMAGE_DIMENS = 300;
-
-	// Pane to display static images and animations
-	private Pane pane;
+	private static final int IMAGE_DIMENS = 300; // default width and height for square images displayed in reel
+	private Pane pane; // Pane to display static images and animations
+	private Random random; // Random number generator to determine reel's value
 
 	// constructor sets the initial reel values
 	public Reel() {
-		pane = new Pane();
+		random = new Random();
 
 		// initializes all the reels to the "Triple 7 winner" image at the start of the game
+		pane = new Pane();
 		pane.getChildren().add(getImageView(new Image(ABSOLUTE_PATH + IMG_TRIP_7_WINNER)));
 		setDisplayReel(pane);
 	}
 	
 	// uses random generator to select image for reel to display when animation stops and returns its String value
+	// String reelValue variable is used in SlotMachine.java's handleWinningCombos() method to determine a winning spin
 	public String spinReel() {
-		String reelValue = null;
-		Random randNum = new Random();
-		int reelNum = randNum.nextInt(NUM_IMAGES); // random number between the number of images (0 - 7)
+		final int randomUpperBound = 100; // non-inclusive
+		String reelValue;
+		int reelNum = random.nextInt(randomUpperBound); // generate random number between from 0 to randomUpperBound - 1
 
-		// select image to display based on the random number, String reelValue is used in SlotMachine.java's
-		// handleWinningCombos() method to determine if there is a winner
-		switch(reelNum) {
-		case 0:
+		System.out.println(reelNum);
+		// non-inclusive UPPER bounds to adjust probabilities
+		final int singleBarBound = 16;
+		final int doubleBarBound = 31;
+		final int tripleBarBound = 44;
+		final int cherriesBound = 47;
+		final int single7Bound = 64;
+		final int double7Bound = 78;
+		final int triple7Bound	= 90;
+
+		// each if statement creates a range bucket for the random number to fall in
+		// first "if" statement's LOWER bound is 0, all "else (if)" statements' LOWER bound is the
+		// UPPER bound of the statement that precedes it
+		if(reelNum < singleBarBound) {
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_SINGLE_BAR));
 			reelValue = "singleBar";
-			break;
-		case 1:
-			setReelImage(new Image(ABSOLUTE_PATH + IMG_DOUBLE_BAR));
-			reelValue = "doubleBar";
-			break;
-		case 2:
-			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIPLE_BAR));
-			reelValue = "tripleBar";
-			break;
-		case 3:
-			setReelImage(new Image(ABSOLUTE_PATH + IMG_SINGLE_7));
-			reelValue = "single7";
-			break;
-		case 4:
+		} else if(reelNum < doubleBarBound) {
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_DOUBLE_7));
 			reelValue = "double7s";
-			break;
-		case 5:
-			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIPLE_7));
-			reelValue = "triple7s";
-			break;
-		case 6:
+		} else if(reelNum < tripleBarBound) {
+			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIPLE_BAR));
+			reelValue = "tripleBar";
+		} else if(reelNum < cherriesBound) {
 			setReelImage(new Image( ABSOLUTE_PATH + IMG_CHERRIES));
 			reelValue = "cherries";
-			break;
-		case 7:
+		} else if(reelNum < single7Bound) {
+			setReelImage(new Image(ABSOLUTE_PATH + IMG_SINGLE_7));
+			reelValue = "single7";
+		} else if(reelNum < double7Bound) {
+			setReelImage(new Image(ABSOLUTE_PATH + IMG_DOUBLE_BAR));
+			reelValue = "doubleBar";
+		} else if(reelNum < triple7Bound) {
+			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIPLE_7));
+			reelValue = "triple7s";
+		} else {
 			setReelImage(new Image(ABSOLUTE_PATH + IMG_TRIP_7_WINNER));
 			reelValue = "trip7sWinner";
-			break;
 		}
 		return reelValue;
 	}
